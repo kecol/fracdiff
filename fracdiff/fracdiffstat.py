@@ -5,7 +5,7 @@ from sklearn.utils.validation import check_array
 from sklearn.utils.validation import check_is_fitted
 
 from fracdiff import Fracdiff
-from fracdiff.stat import StatTester
+from fracdiff.stat import StatTester, StrictStatTester
 
 
 class FracdiffStat(TransformerMixin, BaseEstimator):
@@ -77,7 +77,7 @@ class FracdiffStat(TransformerMixin, BaseEstimator):
         window=10,
         mode="full",
         window_policy="fixed",
-        stattest="ADF",
+        stattest="ADF-KPSS",
         pvalue=0.05,
         precision=0.01,
         upper=1.0,
@@ -123,7 +123,11 @@ class FracdiffStat(TransformerMixin, BaseEstimator):
         -------
         is_stat : bool
         """
-        return StatTester(method=self.stattest).is_stat(x, pvalue=self.pvalue)
+        if self.stattest in ["ADF", "KPSS"]:
+            return StatTester(method=self.stattest).is_stat(x, pvalue=self.pvalue)
+        elif self.stattest == 'ADF-KPSS':
+            return StrictStatTester().is_stat(x, pvalue=self.pvalue)
+        raise Exception(f'Unknown stattest {self.stattest}')
 
     def _find_d(self, x) -> float:
         """
