@@ -118,9 +118,7 @@ def fdiff(
 
     a = np.asanyarray(a)
     axis = np.core.multiarray.normalize_axis_index(axis, a.ndim)
-    #dtype = a.dtype if np.issubdtype(a.dtype, np.float) else np.float64
-    dtype = np.dtype(a).type if np.float64 == np.dtype(a).type else np.float64
-    
+    dtype = a.dtype if np.issubdtype(a.dtype, np.float) else np.float64
 
     combined = []
     if prepend is not np._NoValue:
